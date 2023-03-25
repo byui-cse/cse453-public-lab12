@@ -2,7 +2,7 @@
 # Program:
 #    Lab 12, Bell-LaPadula
 # Author:
-#    Br. Helfrich, Kyle Mueller
+#    Br. Helfrich, Kyle Mueller, Martin Melerio, Andersen Stewart, Abel Wenning
 # Summary: 
 #    This program is designed to keep track of a number of secret
 #    messages. IT will display messages to the appropriate users
@@ -10,6 +10,7 @@
 ########################################################################
 
 from os import path
+from getpass import getpass
 import interact, messages
 
 # Gets the absolute path of the "messages.txt" file
@@ -53,9 +54,18 @@ def session(messages):
     print("Users:")
     interact.display_users()
     username = simple_prompt("\nWhat is your username? ")
-    password = simple_prompt("What is your password? ")
+    if interact.Interact._id_from_user(None, username) == -1:
+        print(f"Welcome, {username}.  You are a guest user with Public security clearance.\n")
+        password = None
+    else:
+        password = getpass("What is your password? ")
 
     interact_ = interact.Interact(username, password, messages)
+    if not hasattr(interact_, "_control"):
+        # Interact not instantiated because user is not a guest, and
+        # was not authenticated
+        return
+
     print(f"\nWelcome, {username}. Please select an option:\n")
     display_options()
 

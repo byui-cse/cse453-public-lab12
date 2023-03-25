@@ -7,7 +7,7 @@
 #    This class allows one user to interact with the system
 ########################################################################
 
-import messages, control
+import control
 
 ###############################################################
 # USER
@@ -46,7 +46,12 @@ class Interact:
     # Authenticate the user and get him/her all set up
     ##################################################
     def __init__(self, username, password, messages):
-        self._authenticate(username, password)
+        if password != None:
+            # not a guest user, so validate password
+            if not self._authenticate(username, password):
+                print("ERROR! That username and password combination is not valid\n")
+                return
+
         id_ = self._id_from_user(username)
         self._username = username
         self._control = (
