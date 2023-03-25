@@ -61,8 +61,13 @@ class Interact:
     ##################################################
     def show(self):
         id_ = self._prompt_for_id("display")
-        if not self._p_messages.show(id_):
+        asset_control = self._p_messages.get_control(id_)
+        if asset_control == False:
             print(f"ERROR! Message ID \'{id_}\' does not exist")
+        elif control.security_condition_read(asset_control, self._control):
+            self._p_messages.show(id_)
+        else:
+            print(f"ERROR! Your security clearance is too low to read message #{id_}")
         print()
 
     ##################################################
@@ -79,10 +84,15 @@ class Interact:
     # Add a single message
     ################################################## 
     def add(self):
-        self._p_messages.add(self._prompt_for_line("message"),
-                             self._username,
-                             self._prompt_for_line("date"),
-                             self._prompt_for_line("security clearance"))
+        asset_control_str = self._prompt_for_line("security clearance")
+        asset_control = control.from_string[asset_control_str]
+        if control.security_condition_write(asset_control, self._control):
+            self._p_messages.add(self._prompt_for_line("message"),
+                                self._username,
+                                self._prompt_for_line("date"),
+                                asset_control)
+        else:
+            print(f"ERROR! Your security clearance is too high to create a message with a security clearance of {asset_control_str}")
 
     ##################################################
     # INTERACT :: UPDATE
@@ -90,10 +100,14 @@ class Interact:
     ################################################## 
     def update(self):
         id_ = self._prompt_for_id("update")
-        if not self._p_messages.show(id_):
+        asset_control = self._p_messages.get_control(id_)
+        if asset_control == False:
             print(f"ERROR! Message ID \'{id_}\' does not exist\n")
-            return
-        self._p_messages.update(id_, self._prompt_for_line("message"))
+        elif control.security_condition_write(asset_control, self._control):
+            self._p_messages.show(id_)
+            self._p_messages.update(id_, self._prompt_for_line("message"))
+        else:
+            print(f"ERROR! Your security clearance is too high to update message #{id_}")
         print()
             
     ##################################################
@@ -101,7 +115,12 @@ class Interact:
     # Remove one message from the list
     ################################################## 
     def remove(self):
-        self._p_messages.remove(self._prompt_for_id("delete"))
+        id_ = self._prompt_for_id("delete")
+        asset_control = self._p_messages.get_control(id_)
+        if control.security_condition_read(asset_control, self._control):
+            self._p_messages.remove(id_)
+        else:
+            print(f"ERROR! Your security clearance is too low to delete message #{id_}")
 
     ##################################################
     # INTERACT :: PROMPT FOR LINE

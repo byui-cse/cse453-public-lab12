@@ -24,6 +24,16 @@ class Messages:
         self._read_messages(filename)
 
     ##################################################
+    # MESSAGES :: GET CONTROL
+    # Get the security clearance of a message
+    ################################################## 
+    def get_control(self, id):
+        for m in self._messages:
+            if m.get_id() == id:
+                return m.get_control()
+        return False
+
+    ##################################################
     # MESSAGES :: DISPLAY
     # Display the list of messages
     ################################################## 
