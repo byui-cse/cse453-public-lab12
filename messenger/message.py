@@ -2,7 +2,7 @@
 # COMPONENT:
 #    MESSAGE
 # Author:
-#    Br. Helfrich, Kyle Mueller, <your name here if you made a change>
+#    Br. Helfrich, Kyle Mueller, Martin Melerio, Andersen Stewart, Abel Wenning
 # Summary: 
 #    This class stores the notion of a message
 ########################################################################
@@ -27,6 +27,7 @@ class Message:
         self._text = "Empty"
         self._author = ""
         self._date = ""
+        self._control = control.Control.Public
         self._id = Message._id_next
         Message._id_next += 1
 
@@ -34,10 +35,14 @@ class Message:
     # MESSAGE NON-DEFAULT CONSTRUCTOR
     # Create a message and fill it
     ##################################################   
-    def __init__(self, text, author, date):
+    def __init__(self, text, author, date, control):
         self._text = text
         self._author = author
         self._date = date
+        self._control = (
+            control.from_string[control]
+            if isinstance(control, str)
+            else control)
         self._id = Message._id_next
         Message._id_next += 1
         self._empty = False
@@ -50,6 +55,13 @@ class Message:
         return self._id
 
     ##################################################
+    # MESSAGE :: GET CONTROL
+    # Determine the control (security clearance) of this message
+    ##################################################   
+    def get_control(self):
+        return self._control
+
+    ##################################################
     # MESSAGE :: DISPLAY PROPERTIES
     # Display the attributes/properties but not the
     # content of this message
@@ -57,7 +69,7 @@ class Message:
     def display_properties(self):
         if self._empty:
             return
-        print(f"\t[{self._id}] Message from {self._author} at {self._date}")
+        print(f"\t[{self._id}] Message from {self._author} at {self._date} with security clearance of {control.to_string[self._control]}")
 
     ##################################################
     # MESSAGE :: DISPLAY TEXT
@@ -81,4 +93,5 @@ class Message:
         self._text = "Empty"
         self._author = ""
         self._date = ""
+        self._control = control.Control.Public
         self._empty = True

@@ -2,7 +2,7 @@
 # COMPONENT:
 #    MESSAGES
 # Author:
-#    Br. Helfrich, Kyle Mueller, <your name here if you made a change>
+#    Br. Helfrich, Kyle Mueller, Martin Melerio, Andersen Stewart, Abel Wenning
 # Summary: 
 #    This class stores the notion of a collection of messages
 ########################################################################
@@ -64,8 +64,8 @@ class Messages:
     # MESSAGES :: ADD
     # Add a new message
     ################################################## 
-    def add(self, text, author, date):
-        m = message.Message(text, author, date)
+    def add(self, text, author, date, control):
+        m = message.Message(text, author, date, control)
         self._messages.append(m)
 
     ##################################################
@@ -77,7 +77,7 @@ class Messages:
             with open(filename, "r") as f:
                 for line in f:
                     text_control, author, date, text = line.split('|')
-                    self.add(text.rstrip('\r\n'), author, date)
+                    self.add(text.rstrip('\r\n'), author, date, control.from_string[text_control])
 
         except FileNotFoundError:
             print(f"ERROR! Unable to open file \"{filename}\"")

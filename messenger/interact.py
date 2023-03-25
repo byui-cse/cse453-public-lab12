@@ -2,7 +2,7 @@
 # COMPONENT:
 #    INTERACT
 # Author:
-#    Br. Helfrich, Kyle Mueller, <your name here if you made a change>
+#    Br. Helfrich, Kyle Mueller, Martin Melerio, Andersen Stewart, Abel Wenning
 # Summary: 
 #    This class allows one user to interact with the system
 ########################################################################
@@ -14,16 +14,17 @@ import messages, control
 # User has a name and a password
 ###############################################################
 class User:
-    def __init__(self, name, password):
+    def __init__(self, name, password, control):
         self.name = name
         self.password = password
+        self.control = control
 
 userlist = [
-   [ "AdmiralAbe",     "password" ],  
-   [ "CaptainCharlie", "password" ], 
-   [ "SeamanSam",      "password" ],
-   [ "SeamanSue",      "password" ],
-   [ "SeamanSly",      "password" ]
+   [ "AdmiralAbe",     "password",  control.Control.Secret ],  
+   [ "CaptainCharlie", "password",  control.Control.Privileged ], 
+   [ "SeamanSam",      "password",  control.Control.Confidential ],
+   [ "SeamanSue",      "password",  control.Control.Confidential ],
+   [ "SeamanSly",      "password",  control.Control.Confidential ]
 ]
 
 ###############################################################
@@ -46,7 +47,12 @@ class Interact:
     ##################################################
     def __init__(self, username, password, messages):
         self._authenticate(username, password)
+        id_ = self._id_from_user(username)
         self._username = username
+        self._control = (
+            control.Control.Public
+            if id_ == -1
+            else users[id_].control)
         self._p_messages = messages
 
     ##################################################
@@ -75,7 +81,8 @@ class Interact:
     def add(self):
         self._p_messages.add(self._prompt_for_line("message"),
                              self._username,
-                             self._prompt_for_line("date"))
+                             self._prompt_for_line("date"),
+                             self._prompt_for_line("security clearance"))
 
     ##################################################
     # INTERACT :: UPDATE
@@ -134,4 +141,4 @@ class Interact:
 #####################################################
 def display_users():
     for user in users:
-        print(f"\t{user.name}")
+        print(f"\t{user.name}\t({control.to_string[user.control]})")
